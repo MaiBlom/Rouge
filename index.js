@@ -7,6 +7,7 @@ var fs = require('fs');
 exports.pokemons = pokemons;
 exports.pokeInts = dataArr
 exports.pokemonPool = pokemonPool;
+exports.userFiles = userFiles;
 
 const bot = new Discord.Client({ 
   partials: ['MESSAGE', 'CHANNEL'],
@@ -16,10 +17,10 @@ const bot = new Discord.Client({
 var pokemons = [];
 var dataArr = [];
 var pokemonPool = 0;
-
 var userFiles = [];
 bot.on('ready', () => {
   fs.readdir(dataFolder, (err, files) => {
+    if (err) { console.log(err) }
     files.forEach(file => {
       if (file != 'pokemons.txt')
         userFiles.push(file);
@@ -38,6 +39,7 @@ bot.on('ready', () => {
 
 bot.on('message', (msg) => {
   if (msg.member.user.bot) return;
+  if (msg.content.charAt(0) != '%') return;
   let msgContent = msg.content.split(" ");
   let msgChannel = msg.channel.id;
   let msgMemberID = msg.member.id;

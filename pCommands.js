@@ -1,12 +1,20 @@
-var { pokemons, pokeInts, pokemonPool } = require('./index.js');
+var { pokemons, pokeInts, pokemonPool, userFiles } = require('./index.js');
+var fs = require("fs");
 
 module.exports = {
     pokeRoll: function(bot, channel, msgMemberID) {
         
     },
     
+    // msgMemberID formatting.
     pokedex: function(bot, channel, msgMemberID) {
-        
+        var memberPokemons = [];
+        fs.readFile(`./DATA/${msgMemberID}.txt`, "utf-8", (err, data) => {
+            if (err) { console.log(err) }
+            memberPokemons = data.split(/(?:;| |\r|\n)+/);
+            console.log(`${msgMemberID}'s pokemons: \n${memberPokemons}`);
+            
+        });
     }
 };
 
