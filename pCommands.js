@@ -69,7 +69,8 @@ module.exports = {
             .setTitle(`${msgUserObj.username}\'s pokedex`)
             .setThumbnail(msgUserObj.avatarURL())
             .setDescription(fieldArray)
-            .setTimestamp();
+            .setTimestamp()
+            .setFooter(`0/${Math.ceil(memberPokemons.length / 10)}`);
 
         bot.channels.cache.get(channel).send(pokedexEmbed).then(s => { s.react('◀'); s.react('▶'); });
     }

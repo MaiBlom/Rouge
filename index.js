@@ -71,7 +71,56 @@ bot.on('message', (msg) => {
 
 bot.on('messageReactionAdd', async (reaction, user) => {
     if(user.bot) return;
-    // let msg = reaction.message;
+    if(reaction.emoji.name !== '◀' && reaction.emoji.name !== '▶') return;
+    let msg = reaction.message;
+    let reactionMemberID = user.id;
+    let memberPokemons = [];
+    let oldEmbed = reaction.message.embeds[0];
+    let fieldArray = [];
+
+    let previousPage = parseInt(oldEmbed.footer.text.split('/')[0]);
+    let newPage = previousPage++;
+    let maxPage = parseInt(oldEmbed.footer.text.split('/')[1]);
+    console.log(`${previousPage}/${maxPage}`);
+    if(maxPage === 0 || maxPage === 1) return;
+
+    // Make this be read before next functions
+    fs.readFile(`./DATA/${reactionMemberID}.txt`, 'utf-8', async (err, data) => {
+        if(err) console.log(err);
+        memberPokemons = data.split(/(?:;| |\r|\n)+/);
+        memberPokemons.splice(memberPokemons.length - 1, 1);
+        console.log(memberPokemons);
+    });
+
+    console.log(memberPokemons);
+
+    if(reaction.emoji.name === '◀' && previousPage > 1) {
+        
+    } else if(reaction.emoji.name === '◀' && previousPage === 1) {
+
+    } else if(reaction.emoji.name === '▶' && previousPage < maxPage) {
+        for(i = newPage * 10; i < (newPage * 10) + 10 && i < memberPokemons.length; i++) {
+            let pokemonShiny = false;
+            if(memberPokemons[i].charAt(0) === '$') {
+                pokemonShiny = true;
+                memberPokemons[i] = memberPokemons[i].substring(1);
+            }
+            let pokemonType = memberPokemons[i].split(',')[0];
+            let pokemonAmount = parseInt(memberPokemons[i].split(',')[1]);
+            if(pokemonShiny)
+                fieldArray.push(`${pokemonAmount}x :sparkles:${pokemonType}`);
+            else
+                fieldArray.push(`${pokemonAmount}x ${pokemonType}`);
+        }
+    } else if(reaction.emoji.name === '▶' && previousPage === maxPage) {
+
+    }
+
+    const newEmbed = new Discord.MessageEmbed(oldEmbed)
+            .setDescription(fieldArray)
+            .setFooter(`${newPage}/${Math.ceil(memberPokemons.length / 10)}`);
+
+    msg.edit(newEmbed);
 });
 
 bot.login(BOTTOKEN);
